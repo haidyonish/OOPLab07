@@ -5,7 +5,40 @@ import java.io.*;
 
 public class Main {
     public static void main(String[] args) {
-        task3();
+        task3_1();
+    }
+
+    public static void task3_1() {
+        System.out.println("\n=== Проверка чтения через рефлексию ===");
+
+        TabulatedFunction arrayFunc = new ArrayTabulatedFunction(0, 10, new double[] {0, 1, 4, 9, 16});
+        TabulatedFunction listFunc = new LinkedListTabulatedFunction(0, 10, new double[] {0, 1, 4, 9, 16});
+
+        ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+        try {
+            TabulatedFunctions.outputTabulatedFunction(arrayFunc, byteOut);
+            ByteArrayInputStream byteIn = new ByteArrayInputStream(byteOut.toByteArray());
+
+            TabulatedFunction readFromBytes = TabulatedFunctions.inputTabulatedFunction(
+                    LinkedListTabulatedFunction.class, byteIn);
+            System.out.println("Прочитано из байтового потока как LinkedList: " +
+                    readFromBytes.getClass().getSimpleName() + " - " + readFromBytes);
+        } catch (IOException e) {
+            System.err.println("Ошибка при работе с байтовым потоком: " + e.getMessage());
+        }
+
+        StringWriter stringWriter = new StringWriter();
+        try {
+            TabulatedFunctions.writeTabulatedFunction(listFunc, stringWriter);
+            StringReader stringReader = new StringReader(stringWriter.toString());
+
+            TabulatedFunction readFromText = TabulatedFunctions.readTabulatedFunction(
+                    ArrayTabulatedFunction.class, stringReader);
+            System.out.println("Прочитано из текстового потока как Array: " +
+                    readFromText.getClass().getSimpleName() + " - " + readFromText);
+        } catch (IOException e) {
+            System.err.println("Ошибка при работе с текстовым потоком: " + e.getMessage());
+        }
     }
 
     public static void task3() {
